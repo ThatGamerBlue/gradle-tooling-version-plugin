@@ -1,0 +1,32 @@
+apply plugin: 'java-library'
+apply plugin: 'maven'
+
+repositories {
+    jcenter()
+
+    maven {
+        url 'https://repo.gradle.org/gradle/libs-releases'
+    }
+
+    if (System.getenv("NEXUS-URL") != null) {
+        maven { url System.getenv("NEXUS-URL") }
+    }
+}
+
+group = "com.thatgamerblue.gradle.plugins"
+archivesBaseName = "version-plugin"
+version = "1.0"
+
+dependencies {
+    implementation gradleApi()
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: System.getenv("NEXUS-URL")) {
+                authentication(userName: System.getenv("NEXUS-USER"), password: System.getenv("NEXUS-PASSWORD"))
+            }
+        }
+    }
+}
